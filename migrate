@@ -333,9 +333,11 @@ INIT_DONE;
           
         }
 
-        if (!isset($this->_options['config_path']))
+
+
+        if (!isset($this->_options['config_path']) || $this->_options['config_path']=="")
         {
-          $this->_options['config_path'] = realpath("../..");
+          $this->_options['config_path'] = realpath("../../database/migrations");
         }
 
 

@@ -76,6 +76,7 @@ class MigrationManager
         "env:",
         "force::",
         "transactional::",
+        "config_path::"
     );
     private $_shortOpts = "";
     private $_config;
@@ -316,20 +317,44 @@ INIT_DONE;
     private function _config()
     {
         $env = DEFAULT_ENVIRONMENT;
-        if (isset($this->_options["env"])) 
+
+
+        if (isset($this->_options['env']))
         {
-            if (!file_exists(ENV_PATH . "/" . $this->_options["env"] . ".ini")) 
-            {
-                exit(ENV_PATH . "/" . $this->_options["env"] . ".ini not found\n");
-            } 
-            else 
-            {
-                $env = $this->_options["env"];
-            }
+          if(in_array($this->_options['env'], $this->_environments))
+          {
+            $env = $this->_options["env"];
+          }
+          else
+          {
+
+            exit('ERROR: Unkown environment type' . "\n") ;
+          }
+          
         }
 
-        $this->_options["env"] = $env;
-        $this->_config = parse_ini_file(ENV_PATH . "/" . $env . ".ini");
+        if ($this->_options['config_path'])
+        {
+          $ini_file_path = $this->_options['config_path'] . '/' . $env .  ".ini";
+        }
+        else
+        {
+          if (isset($this->_options["env"])) 
+          {
+              if (!file_exists(ENV_PATH . "/" . $env . ".ini")) 
+              {
+                  exit(ENV_PATH . "/" . $env . ".ini not found\n");
+              } 
+              else 
+              {
+                  $env = $this->_options["env"];
+                  $ini_file_path = ENV_PATH . "/" . $env . ".ini";
+              }
+          }
+        }
+
+      
+        $this->_config = parse_ini_file($ini_file_path); //ENV_PATH . "/" . $env . ".ini");
         $this->_changelogTable = $this->_config["changelog"];
     }
 
@@ -468,6 +493,13 @@ TEMPLATE;
         $timestamp = date("YmdHis");
         $migration_path = $this->_config['migration_path'];
         $realFileName = $migration_path . "/" . $timestamp . "_" . $fileName . ".sql";
+
+
+        if (isset($this->_options['config_path']))
+        {
+          $realFileName = $this->_options['config_path'] . "/" . $migration_path . "/" . $timestamp . "_" . $fileName . ".sql";
+        }
+
         file_put_contents($realFileName, sprintf($template, str_replace("_", " ", $fileName)));
 
         $this->_showSuccess("migration: " . $realFileName . "\n");

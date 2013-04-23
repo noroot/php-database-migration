@@ -333,9 +333,9 @@ INIT_DONE;
           
         }
 
-        if (!isset($this->_config['config_path']))
+        if (!isset($this->_options['config_path']))
         {
-          $this->_config['config_path'] = realpath("../..");
+          $this->_options['config_path'] = realpath("../..");
         }
 
 

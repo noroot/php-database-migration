@@ -333,6 +333,12 @@ INIT_DONE;
           
         }
 
+        if (!$this->_config['config_path'])
+        {
+          $this->_config['config_path'] = realpath("../..");
+        }
+
+
         if ($this->_options['config_path'])
         {
           $ini_file_path = $this->_options['config_path'] . '/' . $env .  ".ini";

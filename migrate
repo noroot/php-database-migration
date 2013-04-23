@@ -333,7 +333,7 @@ INIT_DONE;
           
         }
 
-        if (!$this->_config['config_path'])
+        if (!isset($this->_config['config_path']))
         {
           $this->_config['config_path'] = realpath("../..");
         }
